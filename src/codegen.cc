@@ -1,6 +1,7 @@
 #include "codegen.h"
 #include "ast.h"
 #include "parser.h"
+#include <llvm/ADT/APFloat.h>
 
 std::unique_ptr<llvm::LLVMContext> TheContext;
 std::unique_ptr<llvm::Module> TheModule;
@@ -19,9 +20,9 @@ llvm::Type* LogErrorT(const char *str) {
 
 llvm::Type* getType(const std::string &typeStr) {
   if (typeStr == "int")
-    return llvm::Type::getInt32Ty(*TheContext);
-  //else if (typeStr == "double") // TODO: Support in NumberExprAST
-    //return llvm::Type::getDoubleTy(*TheContext);
+    return llvm::Type::getInt64Ty(*TheContext);
+  else if (typeStr == "float")
+    return llvm::Type::getDoubleTy(*TheContext);
   else if (typeStr == "bool")
     return llvm::Type::getInt1Ty(*TheContext);
   else if (typeStr == "void")
@@ -29,8 +30,16 @@ llvm::Type* getType(const std::string &typeStr) {
   else return LogErrorT("unknown type");
 }
 
-llvm::Value* NumberExprAST::codegen() {
-  return llvm::ConstantInt::get(*TheContext, llvm::APInt(32, Val, true));
+llvm::Value* BoolExprAST::codegen() {
+  return llvm::ConstantInt::get(*TheContext, llvm::APInt(1, Val));
+}
+
+llvm::Value* IntExprAST::codegen() {
+  return llvm::ConstantInt::get(*TheContext, llvm::APInt(64, Val, true));
+}
+
+llvm::Value* FloatExprAST::codegen() {
+  return llvm::ConstantFP::get(*TheContext, llvm::APFloat(Val));
 }
 
 llvm::Value* VariableExprAST::codegen() {
@@ -77,8 +86,8 @@ llvm::Value* binOpDouble(char op, llvm::Value *L, llvm::Value *R) {
     return Builder->CreateFMul(L, R, "multmp");
   case '<':
     L = Builder->CreateFCmpULT(L, R, "cmptmp");
-    // Convert bool 0/1 to double 0.0 or 1.0
-    return Builder->CreateUIToFP(L, getType("double"), "booltmp");
+    // Convert bool 0/1 to float 0.0 or 1.0
+    return Builder->CreateUIToFP(L, getType("float"), "booltmp");
   default:
     return LogErrorV("invalid binary operator");
   }
@@ -93,7 +102,7 @@ llvm::Value* BinaryExprAST::codegen() {
 
   if (L->getType() == getType("int"))
     return binOpInt32(Op, L, R);
-  else if (L->getType() == getType("double"))
+  else if (L->getType() == getType("float"))
     return binOpDouble(Op, L, R);
   else
    return LogErrorV("invalid type on binary operator");

@@ -8,13 +8,17 @@ enum Token {
 
   // primary
   tok_word,
-  tok_number,
+  tok_bool,
+  tok_int,
+  tok_float,
 
   // Commands
   tok_def, // function definition
 };
 
 extern std::string LastWord;
-extern int NumVal;
+extern bool BoolVal;
+extern int IntVal;
+extern double FloatVal;
 
 int gettok();

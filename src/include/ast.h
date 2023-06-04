@@ -8,11 +8,27 @@ struct ExprAST {
   virtual llvm::Value* codegen() = 0;
 };
 
-// NumberExprAST - Expression class for numeric literals like "1.0".
-struct NumberExprAST : ExprAST {
+// BoolExprAST - Expression class for boolean literals, "false" or "true"
+struct BoolExprAST : ExprAST {
+  bool Val;
+
+  BoolExprAST(bool Val) : Val(Val) {}
+  llvm::Value* codegen() override;
+};
+
+// IntExprAST - Expression class for integer literals like "1".
+struct IntExprAST : ExprAST {
   int Val;
 
-  NumberExprAST(int Val) : Val(Val) {}
+  IntExprAST(int Val) : Val(Val) {}
+  llvm::Value* codegen() override;
+};
+
+// FloatExprAST - Expression class for floating point literals like "1.0".
+struct FloatExprAST : ExprAST {
+  double Val;
+
+  FloatExprAST(double Val) : Val(Val) {}
   llvm::Value* codegen() override;
 };
 

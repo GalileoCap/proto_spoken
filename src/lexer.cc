@@ -2,7 +2,10 @@
 #include <cstdio>
 
 std::string LastWord;
-int NumVal;
+bool BoolVal;
+int IntVal;
+double FloatVal;
+
 static int LastChar = ' ';
 
 static int getChar() {
@@ -12,7 +15,10 @@ static int getChar() {
 static enum Token matchToken(const std::string &str) {
   if (str == "def")
     return tok_def;
-  else return tok_word;
+  else if (str == "true" || str == "false") {
+    BoolVal = str == "true";
+    return tok_bool;
+  } else return tok_word;
 }
 
 static enum Token getWord() {
@@ -25,15 +31,22 @@ static enum Token getWord() {
 }
 
 static enum Token getNumber() {
-  // Matches [0-9]+
+  // Matches ([0-9]+|[0-9][0-9.]*)
   std::string NumStr;
+  bool isFloat = false;
   do {
     NumStr += LastChar;
+    isFloat = LastChar == '.';
     getChar();
-  } while (isdigit(LastChar));
+  } while (isdigit(LastChar) || LastChar == '.');
 
-  NumVal = strtod(NumStr.c_str(), nullptr);
-  return tok_number;
+  if (isFloat) {
+    FloatVal = strtod(NumStr.c_str(), nullptr);
+    return tok_float;
+  } else {
+    IntVal = strtoll(NumStr.c_str(), nullptr, 10);
+    return tok_int;
+  }
 }
 
 static void getComment() {

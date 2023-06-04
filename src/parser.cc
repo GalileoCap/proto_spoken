@@ -33,8 +33,20 @@ std::unique_ptr<PrototypeAST> LogErrorProto(const char *str) {
   return nullptr;
 }
 
-std::unique_ptr<ExprAST> ParseNumberExpr() {
-  auto res = std::make_unique<NumberExprAST>(NumVal);
+std::unique_ptr<ExprAST> ParseBoolExpr() {
+  auto res = std::make_unique<BoolExprAST>(BoolVal);
+  getNextToken();
+  return std::move(res);
+}
+
+std::unique_ptr<ExprAST> ParseIntExpr() {
+  auto res = std::make_unique<IntExprAST>(IntVal);
+  getNextToken();
+  return std::move(res);
+}
+
+std::unique_ptr<ExprAST> ParseFloatExpr() {
+  auto res = std::make_unique<IntExprAST>(FloatVal);
   getNextToken();
   return std::move(res);
 }
@@ -97,8 +109,12 @@ std::unique_ptr<ExprAST> ParsePrimary() {
   case tok_word:
     return ParseWordExpr();
 
-  case tok_number:
-    return ParseNumberExpr();
+  case tok_bool:
+    return ParseBoolExpr();
+  case tok_int:
+    return ParseIntExpr();
+  case tok_float:
+    return ParseFloatExpr();
 
   case '(':
     return ParseParenExpr();
