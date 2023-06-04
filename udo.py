@@ -37,6 +37,8 @@ CSRC = filesWithExtension(SRCD, '.cc')
 CHEADS = filesWithExtension(SRCD, '.h')
 CFLAGS = ' '.join([
   '-g', '-O3',
+  '`llvm-config --cxxflags --ldflags --system-libs --libs core orcjit native`',
+  '-rdynamic',
   f'-I{INCLUDED}',
 ])
 

@@ -1,4 +1,5 @@
 #include "interpret.h"
+#include "codegen.h"
 #include "parser.h"
 #include "utils.h"
 
@@ -10,5 +11,9 @@ int main() {
   BinopPrecedence['-'] = 20;
   BinopPrecedence['*'] = 40; // highest.
 
+  InitializeModule();
+
   MainLoop();
+
+  TheModule->print(llvm::errs(), nullptr);
 }
