@@ -1,36 +1,14 @@
-#include "lexer.h"
+#include "interpret.h"
+#include "parser.h"
 #include "utils.h"
 
-int CurrTok = tok_eol;
-
-int getNextToken() {
-  return CurrTok = gettok();
-}
-
-void HandleTopLevelExpression() {
-  std::cerr << "Read: " << CurrTok << std::endl;
-}
-
-void MainLoop() {
-  std::cerr << "Welcome to Spoken!" << std::endl << "v0.1" << std::endl;
-
-  while (true) {
-    std::cerr << "> ";
-    switch (getNextToken()) {
-    case tok_eof:
-      return;
-
-    case tok_eol:
-      getNextToken();
-      break;
-
-    default:
-      HandleTopLevelExpression();
-      break;
-    }
-  }
-}
-
 int main() {
+	// Install standard binary operators.
+  // 1 is lowest precedence.
+  BinopPrecedence['<'] = 10;
+  BinopPrecedence['+'] = 20;
+  BinopPrecedence['-'] = 20;
+  BinopPrecedence['*'] = 40; // highest.
+
   MainLoop();
 }

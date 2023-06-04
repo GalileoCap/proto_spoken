@@ -5,20 +5,20 @@ std::string LastWord;
 int NumVal;
 static int LastChar = ' ';
 
+static int getChar() {
+  return LastChar = std::getchar();
+}
+
 static enum Token matchToken(const std::string &str) {
   if (str == "def")
     return tok_def;
-  else if (str == "int")
-    return tok_int;
-  else if (str == "bool")
-    return tok_bool;
   else return tok_word;
 }
 
 static enum Token getWord() {
   // Matches [a-zA-Z][a-zA-Z0-9]*
   LastWord = LastChar;
-  while (std::isalnum((LastChar = getchar())))
+  while (std::isalnum(getChar()))
     LastWord += LastChar;
 
   return matchToken(LastWord);
@@ -29,7 +29,7 @@ static enum Token getNumber() {
   std::string NumStr;
   do {
     NumStr += LastChar;
-    LastChar = getchar();
+    getChar();
   } while (isdigit(LastChar));
 
   NumVal = strtod(NumStr.c_str(), nullptr);
@@ -39,14 +39,14 @@ static enum Token getNumber() {
 static void getComment() {
   // Comment until end of line.
   do
-    LastChar = getchar();
+    getChar();
   while (LastChar != EOF && LastChar != '\n' && LastChar != '\r');
 }
 
 int gettok() {
   // Skip any whitespace.
   while (std::isspace(LastChar))
-    LastChar = getchar();
+    getChar();
 
   if (std::isalpha(LastChar)) 
     return getWord();
@@ -60,12 +60,17 @@ int gettok() {
       return gettok();
   }
 
+  if (LastChar == ';') {
+    getChar();
+    return tok_eol;
+  }
+
   // Check for end of file. Don't eat the EOF.
   if (LastChar == EOF)
     return tok_eof;
 
   // Otherwise, just return the character as its ascii value.
   int ThisChar = LastChar;
-  LastChar = getchar();
+  getChar();
   return ThisChar;
 }

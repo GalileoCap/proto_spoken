@@ -10,9 +10,6 @@ enum Token {
   tok_word,
   tok_number,
 
-  tok_int,
-  tok_bool,
-
   // Commands
   tok_def, // function definition
 };
