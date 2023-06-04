@@ -1,0 +1,36 @@
+def op "exit with {int code}" {
+  exit(code);
+}
+
+def op "Assume {bool cond}" {
+  if not cond then
+    exit with -1;
+}
+
+def op "{int x} is greater or equal than {int y}" bool {
+  return x >= y;
+}
+
+def op "{int x} is less than {int y}" bool {
+  return x < y;
+}
+
+def op "pred of {int x}" int {
+  return x-1;
+}
+
+def op "sum of {int x} and {int y}" int {
+  return x + y;
+}
+
+def op "get fib of {int x}" int {
+  Assume x is greater or equal than 0;
+  if x is less than 2 then
+    return 1;
+
+  return sum of get fib of pred of x and get fib of pred of pred of x;
+}
+
+def func main() int {
+  return get fib of 5;
+}
