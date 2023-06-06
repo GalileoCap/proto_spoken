@@ -63,6 +63,15 @@ llvm::Value* BlockExprAST::codegen() {
   return V; // Return the last expression's value
 }
 
+llvm::Value* ReturnExprAST::codegen() {
+  if (auto RetVal = Expr->codegen()) {
+    Builder->CreateRet(RetVal); // TODO: Check types
+    return RetVal;
+  }
+
+  return nullptr;
+}
+
 llvm::Value* binOpInt32(char op, llvm::Value *L, llvm::Value *R) {
   switch (op) {
   case '+':

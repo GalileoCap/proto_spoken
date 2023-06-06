@@ -14,6 +14,7 @@ enum Token {
 
   // Commands
   tok_def, // function definition
+  tok_return, 
 };
 
 extern std::string LastWord;

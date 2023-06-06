@@ -68,6 +68,14 @@ struct BlockExprAST : ExprAST {
   llvm::Value* codegen();
 };
 
+// ReturnExprAST - Class to define returns
+struct ReturnExprAST : ExprAST {
+  std::unique_ptr<ExprAST> Expr;
+
+  ReturnExprAST(std::unique_ptr<ExprAST> Expr) : Expr(std::move(Expr)) {}
+  llvm::Value* codegen();
+};
+
 // ParamAST - Class to define params, like "int x".
 struct ParamAST {
   std::string Name, Type;

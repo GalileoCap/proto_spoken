@@ -18,7 +18,9 @@ static enum Token matchToken(const std::string &str) {
   else if (str == "true" || str == "false") {
     BoolVal = str == "true";
     return tok_bool;
-  } else return tok_word;
+  } else if (str == "return")
+    return tok_return;
+  else return tok_word;
 }
 
 static enum Token getWord() {

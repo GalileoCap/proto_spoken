@@ -93,6 +93,11 @@ std::unique_ptr<ExprAST> ParseWordExpr() {
   return std::make_unique<VariableExprAST>(word);
 }
 
+std::unique_ptr<ExprAST> ParseReturnExpr() {
+  getNextToken(); // eat return
+  return std::make_unique<ReturnExprAST>(ParseExpr());
+}
+
 std::unique_ptr<ExprAST> ParseCallExpr(const std::string &callee) {
   getNextToken(); // eat '('
 
@@ -132,6 +137,9 @@ std::unique_ptr<ExprAST> ParsePrimary() {
     return ParseIntExpr();
   case tok_float:
     return ParseFloatExpr();
+
+  case tok_return:
+    return ParseReturnExpr();
 
   case '(':
     return ParseParenExpr();
