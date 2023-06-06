@@ -60,12 +60,20 @@ struct CallExprAST : ExprAST {
   llvm::Value* codegen() override;
 };
 
+// BlockAST - Class to define code blocks
+struct BlockExprAST : ExprAST {
+  std::vector<std::unique_ptr<ExprAST>> Body;
+
+  BlockExprAST(std::vector<std::unique_ptr<ExprAST>> Body) : Body(std::move(Body)) {}
+  llvm::Value* codegen();
+};
+
 // ParamAST - Class to define params, like "int x".
 struct ParamAST {
   std::string Name, Type;
 
   ParamAST(const std::string &Name, const std::string &Type) : Name(Name), Type(Type) {}
-  llvm::Value* codegen();
+  //llvm::Value* codegen();
 };
 
 // PrototypeAST - This class represents the "prototype" for a function,

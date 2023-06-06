@@ -27,7 +27,6 @@ std::unique_ptr<ParamAST> LogErrorParam(const char *str) {
   return nullptr;
 }
 
-
 std::unique_ptr<PrototypeAST> LogErrorProto(const char *str) {
   LogError(str);
   return nullptr;
@@ -63,6 +62,24 @@ std::unique_ptr<ExprAST> ParseParenExpr() {
 
   getNextToken(); // eat ')'
   return res;
+}
+
+std::unique_ptr<ExprAST> ParseBlockExpr() {
+  getNextToken(); // eat '{'
+
+  std::vector<std::unique_ptr<ExprAST>> body;
+  while (CurrTok != '}') {
+    auto expr = ParseExpr();
+    if (!expr)
+      return nullptr;
+
+    body.push_back(std::move(expr));
+    if (CurrTok == tok_eol)
+      getNextToken(); // eat it
+  }
+
+  getNextToken(); // eat '}'
+  return std::make_unique<BlockExprAST>(std::move(body));
 }
 
 std::unique_ptr<ExprAST> ParseWordExpr() {
@@ -118,6 +135,8 @@ std::unique_ptr<ExprAST> ParsePrimary() {
 
   case '(':
     return ParseParenExpr();
+  case '{':
+    return ParseBlockExpr();
   }
 }
 
@@ -222,8 +241,8 @@ std::unique_ptr<FunctionAST> ParseFunction() {
   if (!proto)
     return nullptr;
 
-  if (auto expr = ParseExpr())
-    return std::make_unique<FunctionAST>(std::move(proto), std::move(expr));
+  if (auto body = ParseExpr()) // TODO: Should I limit expressions accepted here?
+    return std::make_unique<FunctionAST>(std::move(proto), std::move(body));
   return nullptr;
 }
 

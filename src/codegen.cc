@@ -1,7 +1,6 @@
 #include "codegen.h"
 #include "ast.h"
 #include "parser.h"
-#include <llvm/ADT/APFloat.h>
 
 std::unique_ptr<llvm::LLVMContext> TheContext;
 std::unique_ptr<llvm::Module> TheModule;
@@ -53,13 +52,16 @@ llvm::Value* VariableExprAST::codegen() {
   return LogErrorV("unknown variable name");
 }
 
-//llvm::Value* ParamAST::codegen() {
-  //auto type = getType(Type);
-  //if (!type)
-    //return nullptr;
-//
-  //return
-//}
+llvm::Value* BlockExprAST::codegen() {
+  llvm::Value *V = BoolExprAST(false).codegen(); // Default to false
+  for (auto&& expr : Body) {
+    V = expr->codegen();
+    if (!V)
+      return nullptr;
+  }
+
+  return V; // Return the last expression's value
+}
 
 llvm::Value* binOpInt32(char op, llvm::Value *L, llvm::Value *R) {
   switch (op) {

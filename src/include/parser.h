@@ -14,8 +14,11 @@ std::unique_ptr<ParamAST> LogErrorParam(const char *str);
 std::unique_ptr<PrototypeAST> LogErrorProto(const char *str);
 
 std::unique_ptr<ExprAST> ParseExpr();
-std::unique_ptr<ExprAST> ParseNumberExpr();
+std::unique_ptr<ExprAST> ParseBoolExpr();
+std::unique_ptr<ExprAST> ParseIntExpr();
+std::unique_ptr<ExprAST> ParseFloatExpr();
 std::unique_ptr<ExprAST> ParseParenExpr();
+std::unique_ptr<ExprAST> ParseBlockExpr();
 std::unique_ptr<ExprAST> ParseWordExpr();
 std::unique_ptr<ExprAST> ParsePrimary();
 std::unique_ptr<ExprAST> ParseCallExpr(const std::string &callee);
